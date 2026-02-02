@@ -4,12 +4,13 @@ import Tool from '@/models/Tool';
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
+    const { id } = await params;
     const body = await request.json();
-    const updatedTool = await Tool.findByIdAndUpdate(params.id, body, {
+    const updatedTool = await Tool.findByIdAndUpdate(id, body, {
       new: true,
       runValidators: true,
     });
@@ -24,11 +25,12 @@ export async function PATCH(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
-    const deletedTool = await Tool.findByIdAndDelete(params.id);
+    const { id } = await params;
+    const deletedTool = await Tool.findByIdAndDelete(id);
     if (!deletedTool) {
       return NextResponse.json({ error: 'Tool not found' }, { status: 404 });
     }

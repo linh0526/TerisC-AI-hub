@@ -222,9 +222,27 @@ export default function AdminPage() {
   };
 
   const handleDeleteReview = async (toolId: string, reviewId: string) => {
-    if (typeof window !== 'undefined' && !window.confirm('Xóa nhận xét này?')) return;
-    if (typeof window !== 'undefined') {
-      window.alert('Tính năng xóa nhận xét cụ thể sẽ được cập nhật. Hiện tại bạn có thể chỉnh sửa công cụ.');
+    if (typeof window !== 'undefined' && !window.confirm('Bạn có chắc chắn muốn xóa nhận xét này? Hành động này không thể hoàn tác.')) return;
+    
+    try {
+      const res = await fetch('/api/admin/reviews', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ toolId, reviewId }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        fetchStats();
+        // Remove from local state immediately for better UX
+        setReviews(prev => prev.filter(r => r._id !== reviewId));
+      } else {
+        if (typeof window !== 'undefined') window.alert(data.error || 'Lỗi khi xóa nhận xét');
+      }
+    } catch (err) {
+      console.error('Delete review error:', err);
+      if (typeof window !== 'undefined') window.alert('Lỗi kết nối khi xóa nhận xét');
     }
   };
 

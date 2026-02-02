@@ -4,13 +4,14 @@ import Tool from '@/models/Tool';
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
     const { userName, rating, comment } = await request.json();
+    const { id } = await params;
     
-    const tool = await Tool.findById(params.id);
+    const tool = await Tool.findById(id);
     if (!tool) {
       return NextResponse.json({ error: 'Tool not found' }, { status: 404 });
     }
