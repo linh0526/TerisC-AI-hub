@@ -5,7 +5,7 @@ import {
   Trash2, Edit, Plus, X, Search, ChevronLeft, FileJson, 
   CheckCircle2, Clock, MessageCircle, LayoutDashboard, 
   ListChecks, Star, User, Calendar, AlertCircle, ChevronDown,
-  ChevronUp, Check, Hash
+  ChevronUp, Check, Hash, LogOut
 } from 'lucide-react';
 import ThemeToggle from '@/components/ThemeToggle';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -14,6 +14,7 @@ export default function AdminPage() {
   const [tools, setTools] = useState<any[]>([]);
   const [pendingTools, setPendingTools] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
+
   const [statsData, setStatsData] = useState({ totalTools: 0, pendingToolsCount: 0, totalReviews: 0 });
   
   const [activeTab, setActiveTab] = useState<'dashboard' | 'pending' | 'reviews'>('dashboard');
@@ -106,7 +107,21 @@ export default function AdminPage() {
     }
   };
 
+// ... imports
+
+  // ... (existing codes)
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/login', { method: 'DELETE' });
+      if (typeof window !== 'undefined') window.location.href = '/admin/login';
+    } catch (err) {
+      console.error('Logout failed');
+    }
+  };
+
   const fetchCategories = async () => {
+
     try {
       const res = await fetch('/api/categories');
       const data = await res.json();
@@ -318,7 +333,16 @@ export default function AdminPage() {
               Nhận xét
             </button>
           </div>
-          <ThemeToggle />
+          <div className="flex items-center gap-3">
+             <button 
+                onClick={handleLogout}
+                className="p-3 rounded-2xl bg-red-500/10 text-red-500 border border-transparent hover:border-red-500 hover:bg-red-500 hover:text-white transition-all"
+                title="Đăng xuất"
+              >
+                <LogOut size={20} />
+              </button>
+            <ThemeToggle />
+          </div>
         </header>
 
         <div className="mt-8">
