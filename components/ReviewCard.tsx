@@ -26,10 +26,10 @@ export default function ReviewCard({ review }: { review: Review }) {
         </p>
         <div className="flex items-center gap-3 border-t border-card-border pt-4">
           <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-[10px] font-bold text-accent uppercase">
-            {review.userName.charAt(0)}
+            {review.userName?.charAt(0) ?? 'U'}
           </div>
           <div>
-            <h4 className="text-xs font-bold text-foreground">{review.userName}</h4>
+            <h4 className="text-xs font-bold text-foreground">{review.userName || 'Người dùng'}</h4>
             <p className="text-[10px] text-[var(--text-muted)]">Nhận xét về <span className="text-accent">{review.toolName}</span></p>
           </div>
         </div>

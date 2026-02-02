@@ -202,15 +202,15 @@ export default function AdminPage() {
         fetchTools(1, '');
       }
     } catch (err) {
-      alert('Lỗi khi duyệt.');
+      if (typeof window !== 'undefined') window.alert('Lỗi khi duyệt.');
     }
   };
 
   const handleDeleteReview = async (toolId: string, reviewId: string) => {
-    if (!confirm('Xóa nhận xét này?')) return;
-    // Note: Implementation usually involves a specific endpoint for deleting reviews
-    // For now, we'll alert that it's coming soon or suggest editing the tool
-    alert('Tính năng xóa nhận xét cụ thể sẽ được cập nhật. Hiện tại bạn có thể chỉnh sửa công cụ.');
+    if (typeof window !== 'undefined' && !window.confirm('Xóa nhận xét này?')) return;
+    if (typeof window !== 'undefined') {
+      window.alert('Tính năng xóa nhận xét cụ thể sẽ được cập nhật. Hiện tại bạn có thể chỉnh sửa công cụ.');
+    }
   };
 
   const handleEdit = (tool: any) => {
@@ -224,13 +224,15 @@ export default function AdminPage() {
       tags: Array.isArray(tool.tags) ? tool.tags.join(', ') : '',
     });
     setActiveTab('dashboard');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const handleDeleteMany = async () => {
-    if (!confirm(`Bạn có chắc muốn xóa ${selectedIds.length} công cụ đã chọn?`)) return;
+    if (typeof window !== 'undefined' && !window.confirm(`Bạn có chắc muốn xóa ${selectedIds.length} công cụ đã chọn?`)) return;
     try {
       const res = await fetch('/api/tools/delete-many', {
         method: 'POST',
@@ -243,7 +245,7 @@ export default function AdminPage() {
         fetchTools(1, '');
       }
     } catch (err) {
-      alert('Lỗi khi xóa nhiều.');
+      if (typeof window !== 'undefined') window.alert('Lỗi khi xóa nhiều.');
     }
   };
 
@@ -260,7 +262,7 @@ export default function AdminPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Bạn có chắc chắn muốn xóa?')) return;
+    if (typeof window !== 'undefined' && !window.confirm('Bạn có chắc chắn muốn xóa?')) return;
     try {
       const res = await fetch(`/api/tools/${id}`, { method: 'DELETE' });
       if (res.ok) {
@@ -268,7 +270,7 @@ export default function AdminPage() {
         fetchTools(1, '');
       }
     } catch (err) {
-      alert('Lỗi khi xóa.');
+      if (typeof window !== 'undefined') window.alert('Lỗi khi xóa.');
     }
   };
 
