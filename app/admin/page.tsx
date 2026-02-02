@@ -36,6 +36,10 @@ export default function AdminPage() {
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   const [catSearch, setCatSearch] = useState('');
   
+  // Pagination for main list
+  const [toolsPage, setToolsPage] = useState(1);
+  const [toolsTotalPages, setToolsTotalPages] = useState(1);
+
   // Debounce link checking
   useEffect(() => {
     if (!formData.link || editingId) {
@@ -58,36 +62,48 @@ export default function AdminPage() {
 
     return () => clearTimeout(timer);
   }, [formData.link, editingId]);
-  
-  // Pagination for main list
-  const [toolsPage, setToolsPage] = useState(1);
-  const [toolsTotalPages, setToolsTotalPages] = useState(1);
 
   const fetchStats = async () => {
-    const res = await fetch('/api/admin/stats');
-    const data = await res.json();
-    if (data.totalTools !== undefined) setStatsData(data);
+    try {
+      const res = await fetch('/api/admin/stats');
+      const data = await res.json();
+      if (data && typeof data.totalTools === 'number') setStatsData(data);
+    } catch (err) {
+      console.error('Fetch stats error');
+    }
   };
 
   const fetchTools = async (page: number, search: string) => {
-    const res = await fetch(`/api/tools?all=true&page=${page}&limit=10&search=${encodeURIComponent(search)}`);
-    const data = await res.json();
-    if (data.tools) {
-      setTools(data.tools);
-      setToolsTotalPages(data.metadata.pages);
+    try {
+      const res = await fetch(`/api/tools?all=true&page=${page}&limit=10&search=${encodeURIComponent(search)}`);
+      const data = await res.json();
+      if (data && data.tools) {
+        setTools(data.tools);
+        setToolsTotalPages(data.metadata.pages);
+      }
+    } catch (err) {
+      console.error('Fetch tools error');
     }
   };
 
   const fetchPending = async () => {
-    const res = await fetch('/api/admin/pending');
-    const data = await res.json();
-    if (Array.isArray(data)) setPendingTools(data);
+    try {
+      const res = await fetch('/api/admin/pending');
+      const data = await res.json();
+      if (Array.isArray(data)) setPendingTools(data);
+    } catch (err) {
+      console.error('Fetch pending error');
+    }
   };
 
   const fetchReviews = async (page: number) => {
-    const res = await fetch(`/api/admin/reviews?page=${page}&limit=10`);
-    const data = await res.json();
-    if (data.reviews) setReviews(data.reviews);
+    try {
+      const res = await fetch(`/api/admin/reviews?page=${page}&limit=10`);
+      const data = await res.json();
+      if (data && data.reviews) setReviews(data.reviews);
+    } catch (err) {
+      console.error('Fetch reviews error');
+    }
   };
 
   const fetchCategories = async () => {
@@ -114,7 +130,7 @@ export default function AdminPage() {
       if (activeTab === 'dashboard') fetchTools(1, searchTerm);
     }, 500);
     return () => clearTimeout(timer);
-  }, [searchTerm]);
+  }, [searchTerm, activeTab]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
