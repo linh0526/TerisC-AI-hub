@@ -1,0 +1,56 @@
+[
+  {
+    "id": "chatgpt",
+    "name": "ChatGPT",
+    "description": "Trợ lý AI đa năng hỗ trợ trò chuyện, viết lách và lập trình.",
+    "category": "Chatbot",
+    "price": "Free/Paid",
+    "link": "https://chatgpt.com",
+    "tags": ["Popular", "Creative"]
+  },
+  {
+    "id": "midjourney",
+    "name": "Midjourney",
+    "description": "Công cụ tạo hình ảnh nghệ thuật đỉnh cao từ văn bản.",
+    "category": "Hình ảnh",
+    "price": "Paid",
+    "link": "https://midjourney.com",
+    "tags": ["Art", "Pro"]
+  },
+  {
+    "id": "claude",
+    "name": "Claude AI",
+    "description": "AI thế hệ mới với khả năng hiểu ngữ cảnh và lập luận xuất sắc.",
+    "category": "Chatbot",
+    "price": "Free/Paid",
+    "link": "https://claude.ai",
+    "tags": ["Context", "Coding"]
+  },
+  {
+    "id": "v0",
+    "name": "v0.dev",
+    "description": "Tạo giao diện web hiện đại chỉ bằng yêu cầu văn bản.",
+    "category": "Lập trình",
+    "price": "Free/Paid",
+    "link": "https://v0.dev",
+    "tags": ["Web", "UI"]
+  },
+  {
+    "id": "pika",
+    "name": "Pika Labs",
+    "description": "Nền tảng tạo video từ văn bản và hình ảnh đầy ấn tượng.",
+    "category": "Video",
+    "price": "Free/Paid",
+    "link": "https://pika.art",
+    "tags": ["Animation", "Video"]
+  },
+  {
+    "id": "github-copilot",
+    "name": "GitHub Copilot",
+    "description": "Cánh tay đắc lực cho lập trình viên, gợi ý code theo thời gian thực.",
+    "category": "Lập trình",
+    "price": "Paid",
+    "link": "https://github.com/features/copilot",
+    "tags": ["Coding", "IDE"]
+  }
+]

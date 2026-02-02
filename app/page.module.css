@@ -1,0 +1,189 @@
+.main {
+  min-height: 100vh;
+  padding: 0 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 0;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.navLinks {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.navLinks a {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.navLinks a:hover {
+  color: #fff;
+}
+
+.submitBtn {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 99px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.submitBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px var(--accent-glow);
+}
+
+.hero {
+  text-align: center;
+  padding: 8rem 0 4rem;
+}
+
+.hero h1 {
+  font-size: 4rem;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+.hero p {
+  color: var(--text-muted);
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto 3rem;
+}
+
+.searchContainer {
+  display: flex;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  padding: 0.5rem;
+  border-radius: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.searchInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  color: white;
+  outline: none;
+  font-size: 1rem;
+}
+
+.searchBtn {
+  background: #fff;
+  color: #000;
+  border: none;
+  padding: 0 2rem;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.categories {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 4rem;
+}
+
+.categoryPill, .categoryPillActive {
+  padding: 0.5rem 1.2rem;
+  border-radius: 99px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid var(--glass-border);
+}
+
+.categoryPill {
+  color: var(--text-muted);
+  background: var(--glass);
+}
+
+.categoryPillActive {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.toolsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  padding-bottom: 4rem;
+}
+
+.toolCard {
+  background: var(--card-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 2rem;
+  transition: transform 0.3s, border-color 0.3s;
+  cursor: pointer;
+}
+
+.toolCard:hover {
+  transform: translateY(-8px);
+  border-color: var(--accent);
+}
+
+.toolIcon {
+  width: 48px;
+  height: 48px;
+  background: var(--accent-glow);
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.toolCard h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1.4rem;
+}
+
+.toolCard p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.toolTags {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.toolTags span {
+  padding: 0.3rem 0.8rem;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.05);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+}
