@@ -34,7 +34,7 @@ export default function Footer() {
         {/* Left Side: Contact info instead of brand */}
         <div className="flex gap-4">
           <a 
-            href="mailto:linhsubin007@gmail.com" 
+            href="mailto:linhngyn0526@gmail.com" 
             className="w-10 h-10 rounded-xl bg-foreground/[0.03] border border-card-border flex items-center justify-center text-[var(--text-muted)] hover:text-accent hover:border-accent transition-all hover:shadow-lg hover:shadow-accent/10"
             title="Gửi Gmail"
           >

@@ -13,7 +13,9 @@ import { ChevronLeft, ChevronRight, Github, Mail } from 'lucide-react';
 
 export default function Home() {
   const [tools, setTools] = useState<Tool[]>([]);
+  const [allFetchedReviews, setAllFetchedReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [activeCategory, setActiveCategory] = useState('Tất cả');
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -36,11 +38,36 @@ export default function Home() {
       if (data.tools) {
         setTools(data.tools);
         setTotalPages(data.metadata.pages);
+        
+        // Accumulate unique reviews from all fetched tools
+        const newReviews: any[] = [];
+        data.tools.forEach((tool: any) => {
+          if (tool.reviews) {
+            tool.reviews.forEach((rev: any) => {
+              newReviews.push({
+                _id: rev._id || Math.random().toString(),
+                userName: rev.user,
+                toolName: tool.name,
+                comment: rev.comment,
+                rating: rev.rating
+              });
+            });
+          }
+        });
+
+        // Merge with existing reviews, filtering by ID to ensure uniqueness
+        setAllFetchedReviews(prev => {
+          const combined = [...prev, ...newReviews];
+          const uniqueMap = new Map();
+          combined.forEach(rev => uniqueMap.set(rev._id, rev));
+          return Array.from(uniqueMap.values());
+        });
       }
     } catch (error) {
       console.error('Failed to fetch tools:', error);
     } finally {
       setLoading(false);
+      setIsInitialLoad(false);
     }
   }, [itemsPerPage]); // itemsPerPage is a dependency
 
@@ -76,29 +103,19 @@ export default function Home() {
     trackView();
   }, []); // Run once on mount
 
-  // Extract real reviews
-  const realReviews = useMemo(() => {
-    const allReviews: any[] = [];
-    tools.forEach(tool => {
-      if (tool && (tool as any).reviews) {
-        (tool as any).reviews.forEach((rev: any) => {
-          allReviews.push({
-            _id: rev._id || Math.random().toString(),
-            userName: rev.user,
-            toolName: tool.name,
-            comment: rev.comment,
-            rating: rev.rating
-          });
-        });
-      }
-    });
-    return allReviews;
-  }, [tools]);
-
+  // Use all reviews fetched so far instead of only current page reviews
   const marqueeItems = useMemo(() => {
-    // Multiply items to ensure seamless loop regardless of screen width
-    return [...realReviews, ...realReviews, ...realReviews, ...realReviews];
-  }, [realReviews]);
+    // If we have very few reviews, multiply them to ensure a seamless marquee loop
+    const items = allFetchedReviews.length > 0 ? allFetchedReviews : [];
+    if (items.length === 0) return [];
+    
+    // Ensure at least 10-15 items for a smooth loop
+    let result = [...items];
+    while (result.length < 15) {
+      result = [...result, ...items];
+    }
+    return result;
+  }, [allFetchedReviews]);
 
   return (
     <main className="min-h-screen max-w-7xl mx-auto overflow-x-hidden pt-32">
@@ -162,60 +179,71 @@ export default function Home() {
         </section>
 
         {/* Tools Grid */}
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="h-60 bg-card-bg border border-card-border rounded-3xl animate-pulse" />
-            ))}
-          </div>
-        ) : (
-          <div className="space-y-12 mb-20">
-            <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 grid-rows-2 gap-8">
-              {tools.length > 0 ? (
-                tools.map((tool) => (
-                  <ToolCard 
-                    key={tool.id || (tool as any)._id} 
-                    tool={tool} 
-                    onReviewSuccess={() => fetchTools(currentPage, activeCategory, searchQuery)}
-                  />
-                ))
-              ) : (
-                <div className="col-span-full text-center py-20 bg-card-bg/50 border border-dashed border-card-border rounded-[2rem]">
-                  <p className="text-[var(--text-muted)]">Chưa có công cụ nào khớp với tìm kiếm.</p>
+        <div className="relative min-h-[600px] mb-20">
+          {isInitialLoad ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {[...Array(8)].map((_, i) => (
+                <div key={i} className="h-60 bg-card-bg border border-card-border rounded-3xl animate-pulse" />
+              ))}
+            </div>
+          ) : (
+            <div className={`space-y-12 transition-all duration-300 ${loading ? 'opacity-50 grayscale-[0.5] scale-[1.01]' : 'opacity-100'}`}>
+              <motion.section 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+              >
+                {tools.length > 0 ? (
+                  tools.map((tool) => (
+                    <motion.div
+                      key={tool.id || (tool as any)._id}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                    >
+                      <ToolCard 
+                        tool={tool} 
+                        onReviewSuccess={() => fetchTools(currentPage, activeCategory, searchQuery)}
+                      />
+                    </motion.div>
+                  ))
+                ) : (
+                  <div className="col-span-full text-center py-20 bg-card-bg/50 border border-dashed border-card-border rounded-[2rem]">
+                    <p className="text-[var(--text-muted)]">Chưa có công cụ nào khớp với tìm kiếm.</p>
+                  </div>
+                )}
+              </motion.section>
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-4 pt-8">
+                  <button 
+                    disabled={currentPage === 1 || loading}
+                    onClick={() => {
+                      setCurrentPage(p => p - 1);
+                    }}
+                    className="p-3 rounded-2xl bg-card-bg border border-card-border text-foreground disabled:opacity-30 hover:border-accent transition-all shadow-sm"
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+                  <div className="px-6 py-2 rounded-2xl bg-card-bg border border-card-border shadow-sm">
+                    <span className="text-sm font-bold text-foreground">
+                      Trang {currentPage} <span className="text-[var(--text-muted)] mx-2">/</span> {totalPages}
+                    </span>
+                  </div>
+                  <button 
+                    disabled={currentPage === totalPages || loading}
+                    onClick={() => {
+                      setCurrentPage(p => p + 1);
+                    }}
+                    className="p-3 rounded-2xl bg-card-bg border border-card-border text-foreground disabled:opacity-30 hover:border-accent transition-all shadow-sm"
+                  >
+                    <ChevronRight size={20} />
+                  </button>
                 </div>
               )}
-            </section>
-
-            {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div className="flex justify-center items-center gap-4">
-                <button 
-                  disabled={currentPage === 1}
-                  onClick={() => {
-                    setCurrentPage(p => p - 1);
-                    window.scrollTo({ top: 400, behavior: 'smooth' });
-                  }}
-                  className="p-3 rounded-2xl bg-card-bg border border-card-border text-foreground disabled:opacity-30 hover:border-accent transition-all"
-                >
-                  <ChevronLeft size={20} />
-                </button>
-                <span className="text-sm font-bold text-foreground">
-                  Trang {currentPage} / {totalPages}
-                </span>
-                <button 
-                  disabled={currentPage === totalPages}
-                  onClick={() => {
-                    setCurrentPage(p => p + 1);
-                    window.scrollTo({ top: 400, behavior: 'smooth' });
-                  }}
-                  className="p-3 rounded-2xl bg-card-bg border border-card-border text-foreground disabled:opacity-30 hover:border-accent transition-all"
-                >
-                  <ChevronRight size={20} />
-                </button>
-              </div>
-            )}
-          </div>
-        )}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Review Marquee */}
